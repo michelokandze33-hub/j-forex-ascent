@@ -11,7 +11,7 @@ export const submitLead = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => leadSchema.parse(input))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("leads").insert({
+    const { error } = await (supabaseAdmin.from as any)("leads").insert({
       email: data.email,
       name: data.name || null,
       source: data.source,
