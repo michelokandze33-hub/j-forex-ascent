@@ -1,5 +1,5 @@
 import { ArrowRight, Instagram, Send, TrendingUp } from "lucide-react";
-import mentorImg from "@/assets/mentor.jpg";
+import mentorAsset from "@/assets/mentor.png.asset.json";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const stats = [
@@ -92,7 +92,7 @@ export function Hero() {
           <div className="absolute -inset-4 rounded-[2rem] bg-gold/20 blur-3xl" />
           <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-border shadow-soft">
             <img
-              src={mentorImg}
+              src={mentorAsset.url}
               alt="Mentor J Forex Academy"
               width={1024}
               height={1280}
