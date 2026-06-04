@@ -16,7 +16,7 @@ export const listFormations = createServerFn({ method: "GET" }).handler(
   async (): Promise<FormationDTO[]> => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: formations, error } = await supabaseAdmin
-      .from("formations" as never)
+      .from("formations")
       .select("id,title,description,price,formation_images(url,sort_order)")
       .eq("published", true)
       .order("sort_order", { ascending: true });
@@ -70,7 +70,7 @@ export const createFormation = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: roleRow } = await supabase
-      .from("user_roles" as never)
+      .from("user_roles")
       .select("role")
       .eq("user_id", userId)
       .eq("role", "admin")
@@ -79,7 +79,7 @@ export const createFormation = createServerFn({ method: "POST" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: f, error } = await supabaseAdmin
-      .from("formations" as never)
+      .from("formations")
       .insert({
         title: data.title,
         description: data.description,
@@ -96,7 +96,7 @@ export const createFormation = createServerFn({ method: "POST" })
         sort_order: i,
       }));
       const { error: imgErr } = await supabaseAdmin
-        .from("formation_images" as never)
+        .from("formation_images")
         .insert(rows);
       if (imgErr) throw new Error(imgErr.message);
     }
@@ -109,7 +109,7 @@ export const deleteFormation = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: roleRow } = await supabase
-      .from("user_roles" as never)
+      .from("user_roles")
       .select("role")
       .eq("user_id", userId)
       .eq("role", "admin")
@@ -117,7 +117,7 @@ export const deleteFormation = createServerFn({ method: "POST" })
     if (!roleRow) throw new Error("Accès refusé.");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
-      .from("formations" as never)
+      .from("formations")
       .delete()
       .eq("id", data.id);
     if (error) throw new Error(error.message);

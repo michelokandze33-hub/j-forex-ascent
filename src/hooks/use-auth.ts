@@ -13,7 +13,7 @@ export function useAuth() {
     const checkAdmin = async (uid: string | undefined) => {
       if (!uid) return false;
       const { data } = await supabase
-        .from("user_roles" as never)
+        .from("user_roles")
         .select("role")
         .eq("user_id", uid)
         .eq("role", "admin")
