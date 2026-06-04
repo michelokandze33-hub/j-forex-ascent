@@ -2,13 +2,6 @@ import { ArrowRight, Instagram, Send, TrendingUp } from "lucide-react";
 import mentorAsset from "@/assets/mentor.png.asset.json";
 import heroBg from "@/assets/hero-bg.jpg";
 
-const stats = [
-  { value: "+2 500", label: "Élèves formés" },
-  { value: "76%", label: "Winrate moyen" },
-  { value: "1:3.2", label: "Risk / Reward" },
-  { value: "+12", label: "Payouts prop firms" },
-];
-
 export function Hero() {
   return (
     <section className="relative pt-32 pb-20 lg:pt-44 lg:pb-32 overflow-hidden">
@@ -73,30 +66,17 @@ export function Hero() {
               <TrendingUp size={18} />
             </a>
           </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-border">
-            {stats.map((s) => (
-              <div key={s.label}>
-                <div className="text-2xl font-display font-bold text-gold">
-                  {s.value}
-                </div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  {s.label}
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
 
         <div className="relative">
           <div className="absolute -inset-4 rounded-[2rem] bg-gold/20 blur-3xl" />
-          <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-border shadow-soft">
+          <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-border shadow-soft bg-surface-2">
             <img
               src={mentorAsset.url}
               alt="Mentor J Forex Academy"
               width={1024}
               height={1280}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-top"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
             <div className="absolute bottom-6 left-6 right-6 p-5 rounded-2xl bg-surface/80 backdrop-blur-xl border border-border">
@@ -105,9 +85,6 @@ export function Hero() {
               </div>
               <div className="font-display text-xl font-bold mt-1">
                 Jérémie — Fondateur J Forex
-              </div>
-              <div className="text-sm text-muted-foreground">
-                7 ans de trading · Payouts prop firms vérifiés
               </div>
             </div>
           </div>
