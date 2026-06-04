@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LayoutDashboard } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { useAuth } from "@/hooks/use-auth";
 
 const nav = [
   { href: "#probleme", label: "Le problème" },
-  { href: "#resultats", label: "Résultats" },
   { href: "#mentor", label: "Mentor" },
   { href: "#methode", label: "Méthode" },
-  { href: "#offres", label: "Offres" },
+  { href: "#formations", label: "Formations" },
   { href: "#faq", label: "FAQ" },
 ];
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const { user, isAdmin } = useAuth();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -52,8 +54,24 @@ export function Header() {
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-surface border border-border text-sm font-medium hover:bg-surface-2 transition"
+            >
+              <LayoutDashboard size={14} /> Admin
+            </Link>
+          )}
+          {!user && (
+            <Link
+              to="/auth"
+              className="px-4 py-2 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground transition"
+            >
+              Connexion
+            </Link>
+          )}
           <a
-            href="#offres"
+            href="#formations"
             className="px-5 py-2 rounded-full gradient-gold text-primary-foreground text-sm font-semibold hover:opacity-90 transition shadow-gold"
           >
             Rejoindre
@@ -82,8 +100,18 @@ export function Header() {
                 {item.label}
               </a>
             ))}
+            {isAdmin && (
+              <Link to="/admin" onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground">
+                Admin
+              </Link>
+            )}
+            {!user && (
+              <Link to="/auth" onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground">
+                Connexion
+              </Link>
+            )}
             <a
-              href="#offres"
+              href="#formations"
               onClick={() => setOpen(false)}
               className="mt-2 px-5 py-3 rounded-full gradient-gold text-primary-foreground text-center font-semibold"
             >
