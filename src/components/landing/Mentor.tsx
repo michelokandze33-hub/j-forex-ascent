@@ -1,5 +1,5 @@
 import { Award, BadgeCheck, Briefcase, Trophy } from "lucide-react";
-import mentorImg from "@/assets/mentor.jpg";
+import mentorAsset from "@/assets/mentor.png.asset.json";
 
 const facts = [
   { icon: Briefcase, label: "7 ans de trading actif" },
@@ -16,7 +16,7 @@ export function Mentor() {
           <div className="absolute -inset-6 rounded-[2rem] bg-gold/10 blur-3xl" />
           <div className="relative aspect-square rounded-[2rem] overflow-hidden border border-border shadow-soft">
             <img
-              src={mentorImg}
+              src={mentorAsset.url}
               alt="Portrait du mentor"
               loading="lazy"
               width={1024}
