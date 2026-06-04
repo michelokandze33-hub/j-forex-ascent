@@ -1,12 +1,4 @@
-import { Award, BadgeCheck, Briefcase, Trophy } from "lucide-react";
 import mentorAsset from "@/assets/mentor.png.asset.json";
-
-const facts = [
-  { icon: Briefcase, label: "7 ans de trading actif" },
-  { icon: Trophy, label: "12 payouts prop firms vérifiés" },
-  { icon: Award, label: "Certifié SMC & ICT advanced" },
-  { icon: BadgeCheck, label: "+2 500 élèves accompagnés" },
-];
 
 export function Mentor() {
   return (
@@ -14,14 +6,14 @@ export function Mentor() {
       <div className="mx-auto max-w-7xl px-6 grid lg:grid-cols-2 gap-16 items-center">
         <div className="relative">
           <div className="absolute -inset-6 rounded-[2rem] bg-gold/10 blur-3xl" />
-          <div className="relative aspect-square rounded-[2rem] overflow-hidden border border-border shadow-soft">
+          <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-border shadow-soft bg-surface-2">
             <img
               src={mentorAsset.url}
               alt="Portrait du mentor"
               loading="lazy"
               width={1024}
-              height={1024}
-              className="w-full h-full object-cover"
+              height={1280}
+              className="w-full h-full object-cover object-top"
             />
           </div>
         </div>
@@ -39,20 +31,6 @@ export function Mentor() {
             reproductible. Aujourd'hui, il accompagne des centaines d'élèves
             vers la consistance — sans gourou, sans promesses.
           </p>
-
-          <div className="grid sm:grid-cols-2 gap-3">
-            {facts.map(({ icon: Icon, label }) => (
-              <div
-                key={label}
-                className="flex items-center gap-3 p-4 rounded-xl bg-surface border border-border"
-              >
-                <span className="w-9 h-9 rounded-lg bg-gold-soft text-gold grid place-items-center">
-                  <Icon size={18} />
-                </span>
-                <span className="text-sm font-medium">{label}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </section>
