@@ -2,7 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/landing/Header";
 import { Hero } from "@/components/landing/Hero";
 import { Problem } from "@/components/landing/Problem";
+import { Testimonials } from "@/components/landing/Testimonials";
 import { Mentor } from "@/components/landing/Mentor";
+import { Payouts } from "@/components/landing/Payouts";
+import { TradingJournal } from "@/components/landing/TradingJournal";
 import { DashboardMock } from "@/components/landing/DashboardMock";
 import { Method } from "@/components/landing/Method";
 import { Qualification } from "@/components/landing/Qualification";
@@ -14,13 +17,13 @@ import { Footer } from "@/components/landing/Footer";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "J Forex Academy — Devenez un trader discipliné et rentable" },
+      { title: "JEFE Forex — Devenez un trader discipliné et rentable" },
       {
         name: "description",
         content:
-          "Formation premium au trading Forex : méthode SMC, ICT, gestion de risque institutionnelle et coaching live pour des traders constants.",
+          "Formation premium au trading Forex : méthode SMC/ICT, gestion de risque institutionnelle et coaching live. Devenez un trader discipliné et rentable.",
       },
-      { property: "og:title", content: "J Forex Academy" },
+      { property: "og:title", content: "JEFE Forex" },
       {
         property: "og:description",
         content:
@@ -39,7 +42,10 @@ function Index() {
       <main>
         <Hero />
         <Problem />
+        <Testimonials />
         <Mentor />
+        <Payouts />
+        <TradingJournal />
         <DashboardMock />
         <Method />
         <Qualification />

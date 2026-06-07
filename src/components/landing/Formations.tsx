@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Check, Sparkles } from "lucide-react";
 import { listFormations } from "@/lib/formations.functions";
+import { formatFCFA } from "@/lib/format";
 
 export function Formations() {
   const { data, isLoading } = useQuery({
@@ -76,8 +77,8 @@ export function Formations() {
                     </div>
                   )}
                   <div className="mt-6 flex items-baseline gap-1">
-                    <span className="font-display text-4xl font-bold text-gold">
-                      {f.price.toLocaleString("fr-FR")}€
+                    <span className="font-display text-3xl font-bold text-gold">
+                      {f.price === 0 ? "Gratuit" : formatFCFA(f.price)}
                     </span>
                   </div>
                   <button className="mt-6 w-full py-3.5 rounded-full gradient-gold text-primary-foreground font-semibold hover:opacity-90 transition shadow-gold inline-flex items-center justify-center gap-2">

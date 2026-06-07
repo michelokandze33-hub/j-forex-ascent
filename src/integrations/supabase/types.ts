@@ -103,6 +103,138 @@ export type Database = {
         }
         Relationships: []
       }
+      payouts: {
+        Row: {
+          amount_label: string | null
+          created_at: string
+          id: string
+          image_path: string
+          prop_firm: string | null
+          published: boolean
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          amount_label?: string | null
+          created_at?: string
+          id?: string
+          image_path: string
+          prop_firm?: string | null
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          amount_label?: string | null
+          created_at?: string
+          id?: string
+          image_path?: string
+          prop_firm?: string | null
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          alt: string | null
+          created_at: string
+          id: string
+          image_path: string
+          published: boolean
+          sort_order: number
+          source: string
+          updated_at: string
+        }
+        Insert: {
+          alt?: string | null
+          created_at?: string
+          id?: string
+          image_path: string
+          published?: boolean
+          sort_order?: number
+          source?: string
+          updated_at?: string
+        }
+        Update: {
+          alt?: string | null
+          created_at?: string
+          id?: string
+          image_path?: string
+          published?: boolean
+          sort_order?: number
+          source?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      trades: {
+        Row: {
+          created_at: string
+          executed_at: string
+          id: string
+          note: string | null
+          pair: string
+          published: boolean
+          result: string
+          rr: number | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          executed_at?: string
+          id?: string
+          note?: string | null
+          pair: string
+          published?: boolean
+          result: string
+          rr?: number | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          executed_at?: string
+          id?: string
+          note?: string | null
+          pair?: string
+          published?: boolean
+          result?: string
+          rr?: number | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      trading_stats: {
+        Row: {
+          avg_rr: number | null
+          cumulative_gain_label: string | null
+          id: string
+          period_label: string | null
+          updated_at: string
+          winrate_pct: number | null
+        }
+        Insert: {
+          avg_rr?: number | null
+          cumulative_gain_label?: string | null
+          id?: string
+          period_label?: string | null
+          updated_at?: string
+          winrate_pct?: number | null
+        }
+        Update: {
+          avg_rr?: number | null
+          cumulative_gain_label?: string | null
+          id?: string
+          period_label?: string | null
+          updated_at?: string
+          winrate_pct?: number | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string

@@ -4,7 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* J Forex Academy — fonts */
+/* JEFE Forex — fonts */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
 
 /*
@@ -71,7 +71,7 @@
 }
 
 :root {
-  /* J Forex Academy — Dark premium (default) */
+  /* JEFE Forex — Dark premium (default) */
   --radius: 1rem;
   --background: oklch(0.13 0 0);              /* #0B0B0B-ish */
   --foreground: oklch(0.98 0 0);

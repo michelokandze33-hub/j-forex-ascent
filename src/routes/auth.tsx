@@ -6,8 +6,8 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Connexion — J Forex Academy" },
-      { name: "description", content: "Espace membre J Forex Academy." },
+      { title: "Connexion — JEFE Forex" },
+      { name: "description", content: "Espace membre JEFE Forex." },
     ],
   }),
   component: AuthPage,
@@ -61,7 +61,7 @@ function AuthPage() {
           {mode === "signin" ? "Connexion" : "Créer un compte"}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Espace administrateur J Forex Academy.
+          Espace administrateur JEFE Forex.
         </p>
         <form onSubmit={submit} className="mt-6 space-y-4">
           <div>

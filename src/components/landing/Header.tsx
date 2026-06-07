@@ -37,7 +37,7 @@ export function Header() {
             J
           </span>
           <span className="font-display font-bold tracking-tight">
-            J Forex <span className="text-gold">Academy</span>
+            JEFE <span className="text-gold">Forex</span>
           </span>
         </a>
 
