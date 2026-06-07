@@ -3,8 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/mentions-legales")({
   head: () => ({
     meta: [
-      { title: "Mentions légales — J Forex Academy" },
-      { name: "description", content: "Mentions légales de J Forex Academy." },
+      { title: "Mentions légales — JEFE Forex" },
+      { name: "description", content: "Mentions légales de JEFE Forex." },
     ],
   }),
   component: Page,

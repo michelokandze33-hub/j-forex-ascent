@@ -14,7 +14,7 @@ export function Method() {
       <div className="mx-auto max-w-7xl px-6">
         <div className="max-w-3xl mb-16">
           <div className="text-sm uppercase tracking-widest text-gold mb-4">
-            La méthode J Forex
+            La méthode JEFE Forex
           </div>
           <h2 className="font-display text-4xl md:text-5xl font-bold leading-tight">
             7 piliers. Un seul cadre cohérent.
