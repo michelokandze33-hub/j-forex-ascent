@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Instagram, Send, TrendingUp } from "lucide-react";
+import { Instagram, Youtube, Music2 } from "lucide-react";
 
 export function Footer() {
   return (
@@ -20,7 +20,7 @@ export function Footer() {
               une méthode disciplinée, durable et rentable.
             </p>
             <div className="flex gap-3 mt-6">
-              {[Instagram, Send, TrendingUp].map((Icon, i) => (
+              {[Instagram, Music2, Youtube].map((Icon, i) => (
                 <a
                   key={i}
                   href="#"

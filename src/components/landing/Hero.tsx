@@ -73,7 +73,7 @@ export function Hero() {
           <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-border shadow-soft bg-surface-2">
             <img
               src={mentorAsset.url}
-              alt="Mentor J Forex Academy"
+              alt="Mentor JEFE Forex"
               width={1024}
               height={1280}
               className="w-full h-full object-cover object-top"
