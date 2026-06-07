@@ -12,7 +12,7 @@ export function Footer() {
                 J
               </span>
               <span className="font-display font-bold">
-                J Forex <span className="text-gold">Academy</span>
+                JEFE <span className="text-gold">Forex</span>
               </span>
             </div>
             <p className="text-sm text-muted-foreground mt-4 max-w-md leading-relaxed">
@@ -60,7 +60,7 @@ export function Footer() {
             performances passées ne préjugent pas des performances futures. Vous
             pouvez perdre tout ou partie de votre capital investi.
           </p>
-          <p>© {new Date().getFullYear()} J Forex Academy — Tous droits réservés.</p>
+          <p>© {new Date().getFullYear()} JEFE Forex — Tous droits réservés.</p>
         </div>
       </div>
     </footer>

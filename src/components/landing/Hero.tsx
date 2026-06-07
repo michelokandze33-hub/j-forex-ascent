@@ -1,4 +1,4 @@
-import { ArrowRight, Instagram, Send, TrendingUp } from "lucide-react";
+import { ArrowRight, Instagram, Youtube, Music2 } from "lucide-react";
 import mentorAsset from "@/assets/mentor.png.asset.json";
 import heroBg from "@/assets/hero-bg.jpg";
 
@@ -20,7 +20,7 @@ export function Hero() {
         <div className="space-y-8">
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface border border-border text-xs font-medium text-muted-foreground">
             <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
-            Nouvelle promotion ouverte
+            JEFE Forex — Académie de trading
           </span>
 
           <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05]">
@@ -37,7 +37,7 @@ export function Hero() {
 
           <div className="flex flex-wrap gap-4">
             <a
-              href="#offres"
+              href="#formations"
               className="group inline-flex items-center gap-2 px-7 py-4 rounded-full gradient-gold text-primary-foreground font-semibold shadow-gold hover:scale-[1.02] transition"
             >
               Rejoindre l'académie
@@ -59,11 +59,11 @@ export function Hero() {
             <a href="#" aria-label="Instagram" className="hover:text-gold transition">
               <Instagram size={18} />
             </a>
-            <a href="#" aria-label="Telegram" className="hover:text-gold transition">
-              <Send size={18} />
+            <a href="#" aria-label="TikTok" className="hover:text-gold transition">
+              <Music2 size={18} />
             </a>
-            <a href="#" aria-label="TradingView" className="hover:text-gold transition">
-              <TrendingUp size={18} />
+            <a href="#" aria-label="YouTube" className="hover:text-gold transition">
+              <Youtube size={18} />
             </a>
           </div>
         </div>
@@ -84,7 +84,7 @@ export function Hero() {
                 Votre mentor
               </div>
               <div className="font-display text-xl font-bold mt-1">
-                Jérémie — Fondateur J Forex
+                Fondateur JEFE Forex
               </div>
             </div>
           </div>
