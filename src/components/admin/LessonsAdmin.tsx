@@ -201,37 +201,161 @@ export function LessonsAdmin() {
 
       <section className="lg:col-span-2">
         <h3 className="font-display text-xl font-bold mb-6">Leçons existantes</h3>
-        <div className="space-y-3">
-          {isLoading && <p className="text-muted-foreground text-sm">Chargement…</p>}
-          {!isLoading && !data?.length && <p className="text-muted-foreground text-sm">Aucune leçon.</p>}
-          {data?.map((l) => (
-            <div key={l.id} className="p-4 rounded-2xl bg-surface border border-border">
-              <div className="flex items-start gap-3">
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold truncate">{l.title}</div>
-                  <div className="text-xs text-muted-foreground truncate">
-                    {l.module || "—"} · #{l.sort_order}
-                  </div>
-                  <div className="mt-2 flex items-center gap-2 text-xs">
-                    <span className={`px-2 py-0.5 rounded-full border ${l.access === "free" ? "border-emerald-500/40 text-emerald-400" : "border-gold/40 text-gold"}`}>
-                      {l.access === "free" ? "Gratuit" : "Payant"}
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-muted-foreground">
-                      {l.published ? <Eye size={12} /> : <EyeOff size={12} />}
-                      {l.published ? "Publiée" : "Masquée"}
-                    </span>
-                  </div>
-                  <div className="mt-1 text-[10px] font-mono text-muted-foreground/70 truncate">{l.bunny_video_id}</div>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <button onClick={() => onEdit(l)} className="p-2 rounded-lg hover:bg-surface-2 text-muted-foreground hover:text-foreground"><Pencil size={14} /></button>
-                  <button onClick={() => { if (confirm("Supprimer cette leçon ?")) deleteMut.mutate(l.id); }} className="p-2 rounded-lg hover:bg-surface-2 text-muted-foreground hover:text-destructive"><Trash2 size={14} /></button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        {isLoading && <p className="text-muted-foreground text-sm">Chargement…</p>}
+        {!isLoading && !data?.length && <p className="text-muted-foreground text-sm">Aucune leçon.</p>}
+        <LessonsByModule
+          lessons={data ?? []}
+          onEdit={onEdit}
+          onDelete={(id) => { if (confirm("Supprimer cette leçon ?")) deleteMut.mutate(id); }}
+          onReorder={(items) => reorderFn({ data: { items } })}
+        />
       </section>
+    </div>
+  );
+}
+
+function LessonsByModule({
+  lessons,
+  onEdit,
+  onDelete,
+  onReorder,
+}: {
+  lessons: LessonDTO[];
+  onEdit: (l: LessonDTO) => void;
+  onDelete: (id: string) => void;
+  onReorder: (items: { id: string; sort_order: number; module: string }[]) => Promise<unknown>;
+}) {
+  const qc = useQueryClient();
+  const groups = useMemo(() => {
+    const map = new Map<string, LessonDTO[]>();
+    for (const l of lessons) {
+      const key = l.module || "—";
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(l);
+    }
+    for (const arr of map.values()) arr.sort((a, b) => a.sort_order - b.sort_order);
+    return Array.from(map.entries()).sort(([a], [b]) => a.localeCompare(b));
+  }, [lessons]);
+
+  return (
+    <div className="space-y-6">
+      {groups.map(([module, items]) => (
+        <ModuleGroup
+          key={module}
+          module={module}
+          items={items}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          onPersist={async (next) => {
+            const payload = next.map((l, i) => ({ id: l.id, sort_order: i, module: l.module }));
+            // Optimistic cache update
+            qc.setQueryData<LessonDTO[]>(["lessons"], (prev) => {
+              if (!prev) return prev;
+              const updated = new Map(payload.map((p) => [p.id, p.sort_order]));
+              return prev.map((l) => (updated.has(l.id) ? { ...l, sort_order: updated.get(l.id)! } : l));
+            });
+            try {
+              await onReorder(payload);
+              toast.success("Ordre enregistré");
+              qc.invalidateQueries({ queryKey: ["lessons"] });
+            } catch (e) {
+              toast.error(e instanceof Error ? e.message : "Erreur");
+              qc.invalidateQueries({ queryKey: ["lessons"] });
+            }
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function ModuleGroup({
+  module,
+  items,
+  onEdit,
+  onDelete,
+  onPersist,
+}: {
+  module: string;
+  items: LessonDTO[];
+  onEdit: (l: LessonDTO) => void;
+  onDelete: (id: string) => void;
+  onPersist: (next: LessonDTO[]) => void;
+}) {
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const onDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = items.findIndex((i) => i.id === active.id);
+    const newIndex = items.findIndex((i) => i.id === over.id);
+    if (oldIndex < 0 || newIndex < 0) return;
+    const next = arrayMove(items, oldIndex, newIndex);
+    onPersist(next);
+  };
+
+  return (
+    <div>
+      <h4 className="text-xs uppercase tracking-widest text-muted-foreground mb-2">{module}</h4>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+        <SortableContext items={items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+          <div className="space-y-2">
+            {items.map((l) => (
+              <SortableLessonRow key={l.id} lesson={l} onEdit={onEdit} onDelete={onDelete} />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
+    </div>
+  );
+}
+
+function SortableLessonRow({
+  lesson,
+  onEdit,
+  onDelete,
+}: {
+  lesson: LessonDTO;
+  onEdit: (l: LessonDTO) => void;
+  onDelete: (id: string) => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: lesson.id });
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.6 : 1,
+  };
+  return (
+    <div ref={setNodeRef} style={style} className="p-3 rounded-2xl bg-surface border border-border flex items-start gap-2">
+      <button
+        type="button"
+        {...attributes}
+        {...listeners}
+        className="mt-1 p-1 rounded-md text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing touch-none"
+        aria-label="Réordonner"
+      >
+        <GripVertical size={16} />
+      </button>
+      <div className="flex-1 min-w-0">
+        <div className="font-semibold truncate text-sm">{lesson.title}</div>
+        <div className="text-[11px] text-muted-foreground truncate">#{lesson.sort_order}</div>
+        <div className="mt-1.5 flex items-center gap-2 text-[11px]">
+          <span className={`px-2 py-0.5 rounded-full border ${lesson.access === "free" ? "border-emerald-500/40 text-emerald-400" : "border-gold/40 text-gold"}`}>
+            {lesson.access === "free" ? "Gratuit" : "Payant"}
+          </span>
+          <span className="inline-flex items-center gap-1 text-muted-foreground">
+            {lesson.published ? <Eye size={11} /> : <EyeOff size={11} />}
+            {lesson.published ? "Publiée" : "Masquée"}
+          </span>
+        </div>
+      </div>
+      <div className="flex flex-col gap-1">
+        <button onClick={() => onEdit(lesson)} className="p-2 rounded-lg hover:bg-surface-2 text-muted-foreground hover:text-foreground"><Pencil size={14} /></button>
+        <button onClick={() => onDelete(lesson.id)} className="p-2 rounded-lg hover:bg-surface-2 text-muted-foreground hover:text-destructive"><Trash2 size={14} /></button>
+      </div>
     </div>
   );
 }
