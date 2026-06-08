@@ -36,7 +36,7 @@ export const listLessons = createServerFn({ method: "GET" }).handler(
       console.error("[listLessons]", error);
       return [];
     }
-    return (data ?? []) as LessonDTO[];
+    return (data ?? []) as unknown as LessonDTO[];
   },
 );
 
@@ -70,7 +70,7 @@ export const upsertLesson = createServerFn({ method: "POST" })
       .select("id")
       .single();
     if (error || !row) throw new Error(error?.message ?? "Erreur création");
-    return { ok: true as const, id: (row as { id: string }).id };
+    return { ok: true as const, id: (row as unknown as { id: string }).id };
   });
 
 export const deleteLesson = createServerFn({ method: "POST" })
