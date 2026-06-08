@@ -1,9 +1,32 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Trash2, Plus, Pencil, X, Eye, EyeOff } from "lucide-react";
+import { Trash2, Plus, Pencil, X, Eye, EyeOff, GripVertical } from "lucide-react";
 import { toast } from "sonner";
-import { listLessons, upsertLesson, deleteLesson, type LessonDTO } from "@/lib/lessons.functions";
+import {
+  listLessons,
+  upsertLesson,
+  deleteLesson,
+  reorderLessons,
+  type LessonDTO,
+} from "@/lib/lessons.functions";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 type FormState = {
   id?: string;
@@ -41,6 +64,7 @@ export function LessonsAdmin() {
 
   const upsertFn = useServerFn(upsertLesson);
   const deleteFn = useServerFn(deleteLesson);
+  const reorderFn = useServerFn(reorderLessons);
 
   const { data, isLoading } = useQuery({ queryKey: ["lessons"], queryFn: () => listLessons() });
 
