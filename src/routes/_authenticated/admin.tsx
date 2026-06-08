@@ -6,6 +6,7 @@ import { FormationsAdmin } from "@/components/admin/FormationsAdmin";
 import { TestimonialsAdmin } from "@/components/admin/TestimonialsAdmin";
 import { PayoutsAdmin } from "@/components/admin/PayoutsAdmin";
 import { TradingAdmin } from "@/components/admin/TradingAdmin";
+import { LessonsAdmin } from "@/components/admin/LessonsAdmin";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Administration — JEFE Forex" }] }),
@@ -14,6 +15,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 const TABS = [
   { id: "formations", label: "Formations", Component: FormationsAdmin },
+  { id: "lessons", label: "Leçons", Component: LessonsAdmin },
   { id: "testimonials", label: "Témoignages", Component: TestimonialsAdmin },
   { id: "payouts", label: "Payouts", Component: PayoutsAdmin },
   { id: "trading", label: "Journal & Stats", Component: TradingAdmin },

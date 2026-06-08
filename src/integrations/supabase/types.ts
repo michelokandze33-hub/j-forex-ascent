@@ -103,6 +103,48 @@ export type Database = {
         }
         Relationships: []
       }
+      lessons: {
+        Row: {
+          access: string
+          bunny_video_id: string
+          created_at: string
+          description: string
+          duration_seconds: number | null
+          id: string
+          module: string
+          published: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          access?: string
+          bunny_video_id: string
+          created_at?: string
+          description?: string
+          duration_seconds?: number | null
+          id?: string
+          module?: string
+          published?: boolean
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          access?: string
+          bunny_video_id?: string
+          created_at?: string
+          description?: string
+          duration_seconds?: number | null
+          id?: string
+          module?: string
+          published?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       payouts: {
         Row: {
           amount_label: string | null
