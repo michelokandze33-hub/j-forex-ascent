@@ -83,3 +83,32 @@ export const deleteLesson = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });
+
+const reorderSchema = z.object({
+  items: z
+    .array(
+      z.object({
+        id: z.string().uuid(),
+        sort_order: z.number().int().min(0).max(10_000),
+        module: z.string().trim().max(200),
+      }),
+    )
+    .min(1)
+    .max(500),
+});
+
+export const reorderLessons = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => reorderSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    for (const it of data.items) {
+      const { error } = await supabaseAdmin
+        .from("lessons" as any)
+        .update({ sort_order: it.sort_order, module: it.module })
+        .eq("id", it.id);
+      if (error) throw new Error(error.message);
+    }
+    return { ok: true as const };
+  });
