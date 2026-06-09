@@ -40,6 +40,23 @@ export const listLessons = createServerFn({ method: "GET" }).handler(
   },
 );
 
+export const listStudentLessons = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async (): Promise<LessonDTO[]> => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin
+      .from("lessons" as any)
+      .select("id,title,description,bunny_video_id,module,sort_order,access,duration_seconds,published")
+      .eq("published", true)
+      .order("module", { ascending: true })
+      .order("sort_order", { ascending: true });
+    if (error) {
+      console.error("[listStudentLessons]", error);
+      return [];
+    }
+    return (data ?? []) as unknown as LessonDTO[];
+  });
+
 const upsertSchema = z.object({
   id: z.string().uuid().optional(),
   title: z.string().trim().min(1).max(200),

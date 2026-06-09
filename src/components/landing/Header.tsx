@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Menu, X, LayoutDashboard } from "lucide-react";
+import { Menu, X, LayoutDashboard, GraduationCap } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -62,6 +62,14 @@ export function Header() {
               <LayoutDashboard size={14} /> Admin
             </Link>
           )}
+          {user && (
+            <Link
+              to="/espace-eleve"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-surface border border-border text-sm font-medium hover:bg-surface-2 transition"
+            >
+              <GraduationCap size={14} /> Espace élève
+            </Link>
+          )}
           {!user && (
             <Link
               to="/auth"
@@ -103,6 +111,11 @@ export function Header() {
             {isAdmin && (
               <Link to="/admin" onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground">
                 Admin
+              </Link>
+            )}
+            {user && (
+              <Link to="/espace-eleve" onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground">
+                Espace élève
               </Link>
             )}
             {!user && (
