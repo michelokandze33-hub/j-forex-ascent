@@ -20,11 +20,22 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const redirectAfterAuth = async (userId: string) => {
+    const { data } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("role", "admin")
+      .maybeSingle();
+    navigate({ to: data ? "/admin" : "/espace-eleve", replace: true });
+  };
+
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: "/admin", replace: true });
+      if (data.user) redirectAfterAuth(data.user.id);
     });
-  }, [navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +45,7 @@ function AuthPage() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${window.location.origin}/admin` },
+            options: { emailRedirectTo: `${window.location.origin}/espace-eleve` },
         });
         if (error) throw error;
         toast.success("Compte créé. Vous êtes connecté.");
@@ -43,7 +54,8 @@ function AuthPage() {
         if (error) throw error;
         toast.success("Connecté.");
       }
-      navigate({ to: "/admin", replace: true });
+      const { data: u } = await supabase.auth.getUser();
+      if (u.user) await redirectAfterAuth(u.user.id);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erreur");
     } finally {
@@ -61,7 +73,7 @@ function AuthPage() {
           {mode === "signin" ? "Connexion" : "Créer un compte"}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Espace administrateur JEFE Forex.
+          Accédez à votre espace élève (cours, vidéos) ou à l'admin.
         </p>
         <form onSubmit={submit} className="mt-6 space-y-4">
           <div>
