@@ -15,6 +15,7 @@ import { Route as CgvRouteImport } from './routes/cgv'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedEspaceEleveRouteImport } from './routes/_authenticated/espace-eleve'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
 const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
@@ -46,6 +47,12 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedEspaceEleveRoute =
+  AuthenticatedEspaceEleveRouteImport.update({
+    id: '/espace-eleve',
+    path: '/espace-eleve',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -59,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/confidentialite': typeof ConfidentialiteRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/espace-eleve': typeof AuthenticatedEspaceEleveRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -67,6 +75,7 @@ export interface FileRoutesByTo {
   '/confidentialite': typeof ConfidentialiteRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/espace-eleve': typeof AuthenticatedEspaceEleveRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,6 +86,7 @@ export interface FileRoutesById {
   '/confidentialite': typeof ConfidentialiteRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/espace-eleve': typeof AuthenticatedEspaceEleveRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -87,6 +97,7 @@ export interface FileRouteTypes {
     | '/confidentialite'
     | '/mentions-legales'
     | '/admin'
+    | '/espace-eleve'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -95,6 +106,7 @@ export interface FileRouteTypes {
     | '/confidentialite'
     | '/mentions-legales'
     | '/admin'
+    | '/espace-eleve'
   id:
     | '__root__'
     | '/'
@@ -104,6 +116,7 @@ export interface FileRouteTypes {
     | '/confidentialite'
     | '/mentions-legales'
     | '/_authenticated/admin'
+    | '/_authenticated/espace-eleve'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -159,6 +172,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/espace-eleve': {
+      id: '/_authenticated/espace-eleve'
+      path: '/espace-eleve'
+      fullPath: '/espace-eleve'
+      preLoaderRoute: typeof AuthenticatedEspaceEleveRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -171,10 +191,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedEspaceEleveRoute: typeof AuthenticatedEspaceEleveRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedEspaceEleveRoute: AuthenticatedEspaceEleveRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
