@@ -31,6 +31,9 @@ export const Route = createFileRoute("/")({
       },
       { property: "og:type", content: "website" },
     ],
+    links: [
+      { rel: "preload", as: "image", href: "/src/assets/hero-bg.jpg", fetchpriority: "high" },
+    ],
   }),
   component: Index,
 });

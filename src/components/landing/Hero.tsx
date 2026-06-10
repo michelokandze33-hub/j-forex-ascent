@@ -4,7 +4,7 @@ import heroBg from "@/assets/hero-bg.jpg";
 
 export function Hero() {
   return (
-    <section className="relative pt-32 pb-20 lg:pt-44 lg:pb-32 overflow-hidden">
+    <section className="relative pt-32 pb-20 lg:pt-44 lg:pb-32 overflow-hidden grain">
       <div
         className="absolute inset-0 -z-10 opacity-30"
         style={{
@@ -14,7 +14,8 @@ export function Hero() {
         }}
       />
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/60 via-background/90 to-background" />
-      <div className="absolute top-1/3 left-1/4 -z-10 w-[600px] h-[600px] rounded-full bg-gold/10 blur-3xl" />
+      <div className="absolute top-1/3 left-1/4 -z-10 w-[600px] h-[600px] rounded-full bg-gold/10 blur-3xl animate-float-orb" />
+      <div className="absolute bottom-0 right-0 -z-10 w-[500px] h-[500px] rounded-full bg-gold/5 blur-3xl animate-float-orb [animation-delay:-6s]" />
 
       <div className="mx-auto max-w-7xl px-6 grid lg:grid-cols-2 gap-12 items-center">
         <div className="space-y-8">
