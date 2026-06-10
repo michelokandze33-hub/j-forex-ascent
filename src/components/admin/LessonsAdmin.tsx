@@ -8,6 +8,7 @@ import {
   upsertLesson,
   deleteLesson,
   reorderLessons,
+  bulkInsertLessons,
   type LessonDTO,
 } from "@/lib/lessons.functions";
 import {
