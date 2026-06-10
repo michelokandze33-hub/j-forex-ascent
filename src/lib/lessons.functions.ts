@@ -24,8 +24,10 @@ async function assertAdmin(context: { supabase: any; userId: string }) {
   if (!data) throw new Error("Accès refusé : droits administrateur requis.");
 }
 
-export const listLessons = createServerFn({ method: "GET" }).handler(
-  async (): Promise<LessonDTO[]> => {
+export const listLessons = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<LessonDTO[]> => {
+    await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
       .from("lessons" as any)
@@ -37,12 +39,11 @@ export const listLessons = createServerFn({ method: "GET" }).handler(
       return [];
     }
     return (data ?? []) as unknown as LessonDTO[];
-  },
-);
+  });
 
 export const listStudentLessons = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async (): Promise<LessonDTO[]> => {
+  .handler(async ({ context }): Promise<LessonDTO[]> => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
       .from("lessons" as any)
@@ -54,7 +55,19 @@ export const listStudentLessons = createServerFn({ method: "GET" })
       console.error("[listStudentLessons]", error);
       return [];
     }
-    return (data ?? []) as unknown as LessonDTO[];
+    const rows = (data ?? []) as unknown as LessonDTO[];
+    // Authorization: only admins (and, later, paying members) receive the
+    // bunny_video_id for paid lessons. Free lessons keep their video id.
+    const { data: roleRow } = await context.supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", context.userId)
+      .eq("role", "admin")
+      .maybeSingle();
+    const isAdmin = !!roleRow;
+    return rows.map((l) =>
+      l.access === "paid" && !isAdmin ? { ...l, bunny_video_id: "" } : l,
+    );
   });
 
 const upsertSchema = z.object({
