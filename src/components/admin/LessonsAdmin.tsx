@@ -66,6 +66,7 @@ export function LessonsAdmin() {
   const upsertFn = useServerFn(upsertLesson);
   const deleteFn = useServerFn(deleteLesson);
   const reorderFn = useServerFn(reorderLessons);
+  const bulkFn = useServerFn(bulkInsertLessons);
 
   const { data, isLoading } = useQuery({ queryKey: ["lessons"], queryFn: () => listLessons() });
 
@@ -198,6 +199,14 @@ export function LessonsAdmin() {
             )}
           </div>
         </form>
+
+        <BulkImportPanel
+          onImport={async (payload) => {
+            const res = await bulkFn({ data: payload });
+            qc.invalidateQueries({ queryKey: ["lessons"] });
+            return res.inserted;
+          }}
+        />
       </section>
 
       <section className="lg:col-span-2">
