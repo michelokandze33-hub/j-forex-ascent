@@ -8,6 +8,7 @@ import {
   upsertLesson,
   deleteLesson,
   reorderLessons,
+  bulkInsertLessons,
   type LessonDTO,
 } from "@/lib/lessons.functions";
 import {
@@ -65,6 +66,7 @@ export function LessonsAdmin() {
   const upsertFn = useServerFn(upsertLesson);
   const deleteFn = useServerFn(deleteLesson);
   const reorderFn = useServerFn(reorderLessons);
+  const bulkFn = useServerFn(bulkInsertLessons);
 
   const { data, isLoading } = useQuery({ queryKey: ["lessons"], queryFn: () => listLessons() });
 
@@ -197,6 +199,14 @@ export function LessonsAdmin() {
             )}
           </div>
         </form>
+
+        <BulkImportPanel
+          onImport={async (payload) => {
+            const res = await bulkFn({ data: payload });
+            qc.invalidateQueries({ queryKey: ["lessons"] });
+            return res.inserted;
+          }}
+        />
       </section>
 
       <section className="lg:col-span-2">
@@ -356,6 +366,115 @@ function SortableLessonRow({
         <button onClick={() => onEdit(lesson)} className="p-2 rounded-lg hover:bg-surface-2 text-muted-foreground hover:text-foreground"><Pencil size={14} /></button>
         <button onClick={() => onDelete(lesson.id)} className="p-2 rounded-lg hover:bg-surface-2 text-muted-foreground hover:text-destructive"><Trash2 size={14} /></button>
       </div>
+    </div>
+  );
+}
+
+type BulkPayload = {
+  module: string;
+  access: "free" | "paid";
+  published: boolean;
+  start_sort_order: number;
+  items: { title: string; bunny_video_id: string; description: string; duration_seconds: number | null }[];
+};
+
+function BulkImportPanel({ onImport }: { onImport: (p: BulkPayload) => Promise<number> }) {
+  const [text, setText] = useState("");
+  const [module, setModule] = useState("");
+  const [access, setAccess] = useState<"free" | "paid">("paid");
+  const [published, setPublished] = useState(true);
+  const [startOrder, setStartOrder] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const parse = (raw: string): BulkPayload["items"] => {
+    const items: BulkPayload["items"] = [];
+    for (const line of raw.split(/\r?\n/)) {
+      const t = line.trim();
+      if (!t || t.startsWith("#")) continue;
+      // accept comma, semicolon, or tab
+      const parts = t.split(/\t|;|,/).map((s) => s.trim()).filter(Boolean);
+      if (parts.length < 2) continue;
+      const [bunny_video_id, title, duration] = parts;
+      const d = duration ? parseInt(duration, 10) : NaN;
+      items.push({
+        bunny_video_id,
+        title,
+        description: "",
+        duration_seconds: Number.isFinite(d) ? d : null,
+      });
+    }
+    return items;
+  };
+
+  const preview = useMemo(() => parse(text), [text]);
+
+  const submit = async () => {
+    if (!preview.length) { toast.error("Aucune ligne valide à importer"); return; }
+    if (preview.length > 500) { toast.error("Maximum 500 lignes par import"); return; }
+    setLoading(true);
+    try {
+      const n = await onImport({ module: module.trim(), access, published, start_sort_order: startOrder, items: preview });
+      toast.success(`${n} leçon(s) importée(s)`);
+      setText("");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur d'import");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="p-6 rounded-3xl bg-surface border border-border shadow-soft space-y-4">
+      <div>
+        <h2 className="font-display text-2xl font-bold flex items-center gap-2">
+          <Plus className="text-gold" /> Import en masse (jusqu'à 500 vidéos)
+        </h2>
+        <p className="text-xs text-muted-foreground mt-1">
+          Une ligne par vidéo, séparateur virgule / point-virgule / tabulation : <code>bunny_video_id, titre, durée_en_secondes</code> (durée optionnelle). Lignes commençant par <code>#</code> ignorées.
+        </p>
+      </div>
+
+      <div className="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label className="text-xs uppercase tracking-widest text-muted-foreground">Module (appliqué à toutes)</label>
+          <input value={module} onChange={(e) => setModule(e.target.value)} maxLength={200} placeholder="ex. Module 2 — Avancé" className="mt-1 w-full px-4 py-3 rounded-xl bg-surface-2 border border-border focus:border-gold outline-none" />
+        </div>
+        <div>
+          <label className="text-xs uppercase tracking-widest text-muted-foreground">Ordre de départ</label>
+          <input type="number" min={0} value={startOrder} onChange={(e) => setStartOrder(parseInt(e.target.value || "0", 10))} className="mt-1 w-full px-4 py-3 rounded-xl bg-surface-2 border border-border focus:border-gold outline-none" />
+        </div>
+        <div>
+          <label className="text-xs uppercase tracking-widest text-muted-foreground">Accès</label>
+          <div className="mt-1 grid grid-cols-2 gap-2">
+            {(["free", "paid"] as const).map((a) => (
+              <button key={a} type="button" onClick={() => setAccess(a)}
+                className={`px-4 py-3 rounded-xl border text-sm font-medium transition ${access === a ? "bg-gold text-primary-foreground border-gold" : "bg-surface-2 border-border text-muted-foreground hover:text-foreground"}`}>
+                {a === "free" ? "Gratuit" : "Payant"}
+              </button>
+            ))}
+          </div>
+        </div>
+        <label className="flex items-end gap-2 text-sm pb-2">
+          <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
+          Publier immédiatement
+        </label>
+      </div>
+
+      <div>
+        <label className="text-xs uppercase tracking-widest text-muted-foreground">Liste des vidéos</label>
+        <textarea
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          rows={8}
+          placeholder={"# bunny_video_id, titre, durée\n9f8a7c12-..., Introduction au Forex, 540\n3c12e4d8-..., Les paires majeures, 720"}
+          className="mt-1 w-full px-4 py-3 rounded-xl bg-surface-2 border border-border focus:border-gold outline-none font-mono text-xs resize-y"
+        />
+        <p className="mt-2 text-xs text-muted-foreground">{preview.length} ligne(s) valide(s) détectée(s).</p>
+      </div>
+
+      <button onClick={submit} disabled={loading || !preview.length} className="w-full py-3.5 rounded-full gradient-gold text-primary-foreground font-semibold shadow-gold disabled:opacity-50">
+        {loading ? "Import en cours..." : `Importer ${preview.length || ""} leçon(s)`}
+      </button>
     </div>
   );
 }
