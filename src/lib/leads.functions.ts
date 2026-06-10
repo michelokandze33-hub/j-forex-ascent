@@ -4,7 +4,7 @@ import { z } from "zod";
 const leadSchema = z.object({
   email: z.string().trim().email("Email invalide").max(255),
   name: z.string().trim().min(1).max(100).optional().or(z.literal("")),
-  source: z.string().trim().max(50).default("lead-magnet"),
+  source: z.literal("lead-magnet").default("lead-magnet"),
 });
 
 export const submitLead = createServerFn({ method: "POST" })
