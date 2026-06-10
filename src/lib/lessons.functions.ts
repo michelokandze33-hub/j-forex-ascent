@@ -114,6 +114,47 @@ export const deleteLesson = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
+const bulkSchema = z.object({
+  module: z.string().trim().max(200).default(""),
+  access: z.enum(["free", "paid"]).default("paid"),
+  published: z.boolean().default(true),
+  start_sort_order: z.number().int().min(0).max(10_000).default(0),
+  items: z
+    .array(
+      z.object({
+        title: z.string().trim().min(1).max(200),
+        bunny_video_id: z.string().trim().min(1).max(200),
+        description: z.string().trim().max(5000).default(""),
+        duration_seconds: z.number().int().min(0).max(86_400).nullable().default(null),
+      }),
+    )
+    .min(1)
+    .max(500),
+});
+
+export const bulkInsertLessons = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => bulkSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const rows = data.items.map((it, i) => ({
+      title: it.title,
+      bunny_video_id: it.bunny_video_id,
+      description: it.description,
+      duration_seconds: it.duration_seconds,
+      module: data.module,
+      access: data.access,
+      published: data.published,
+      sort_order: data.start_sort_order + i,
+    }));
+    const { error, count } = await supabaseAdmin
+      .from("lessons" as any)
+      .insert(rows, { count: "exact" });
+    if (error) throw new Error(error.message);
+    return { ok: true as const, inserted: count ?? rows.length };
+  });
+
 const reorderSchema = z.object({
   items: z
     .array(
